@@ -16,10 +16,6 @@ int const COLUMN = 8;
 
 
 
-
-
-
-
 string Letters[26] = {"A","B","C","D","E","F","G","H","I","J","K",
 	"L","M","N","O","P","Q","R","S","T","U","V","W","X", "Y","Z" };
 
@@ -36,7 +32,7 @@ int Menu() {
 
 	cout << setfill('-') << setw(33);
 	cout << "Menu";
-	cout << "--------------------------------";
+	cout << setfill('-') << setw(33) <<"";
 	cout << endl;
 
 
