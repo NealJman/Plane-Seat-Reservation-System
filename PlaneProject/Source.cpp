@@ -1,9 +1,4 @@
-/***************
- *Author:Neal Jayaraman
- *Creation Date:11/8/22
- *Modification Date:11/8/22
- *Purpose:
-****************/
+
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -18,13 +13,14 @@
 #include "Menu.h"
 using namespace std;
 
-
+//   Purpose: Carry out Plane reservation system
+//   Author: Neal Jayaraman
+//   Creation Date: 12/1/22
+//   Last Modification Date: 12/4/22
 int main() {
 
 
-
-
-	//Exiting bool
+	//Exiting progrma bool
 	bool Quit = false;
 
 	//Creates small plane object
