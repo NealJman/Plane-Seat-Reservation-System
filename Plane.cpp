@@ -71,7 +71,7 @@ void Plane::readSeatChart() {
 		Seatfile >> seatRow;
 
 
-
+		
 		for (int i = 0; i < COLUMNTOTAL; ++i) {
 			Seatfile >> temporaryColumn[i];
 		}
@@ -81,9 +81,9 @@ void Plane::readSeatChart() {
 
 		for (int i = 0; i < COLUMNTOTAL; ++i) {
 
-			seatChart[j][i].input = temporaryColumn[i];
-			if (seatChart[j][i].input == "X")
-				seatChart[j][i].reserved = true;
+			seatChart[j][i].setInput (temporaryColumn[i]);
+			if (seatChart[j][i].getInput() == "X")
+				seatChart[j][i].setReserved(true);
 
 		}
 
@@ -109,7 +109,7 @@ void Plane::displaySeatChart() {
 
 		for (int j = 0; j < COLUMNTOTAL; ++j) {
 
-			cout << seatChart[i][j].input << " ";
+			cout << seatChart[i][j].getInput() << " ";
 		}
 		cout << endl;
 	}
@@ -118,9 +118,10 @@ void Plane::displaySeatChart() {
 
 void Plane::reserveSeat() {
 
-	string rowString;
-	string columnString;
 
+	string rowString = "0";
+	string columnString = "A";
+	bool error = false;
 
 	string userSeat;
 	cout << "Enter desired seat" << endl;
@@ -128,7 +129,7 @@ void Plane::reserveSeat() {
 		cin >> userSeat;
 
 		//Error checking: checks if size if greater than what can be entered
-		if (userSeat.size() >= 6) {
+		if (userSeat.size() >= 6 || userSeat.size() < 2) {
 			throw runtime_error("Invalid Seat");
 		}
 
@@ -161,50 +162,74 @@ void Plane::reserveSeat() {
 
 		//Error Checking: Checsk if a valid Column letter in put in
 		char tempChar = columnString.at(0);
-		if (!isalpha(tempChar))
+		if (!isalpha(tempChar)) {
 			throw runtime_error("Invalid Column");
+		}
+		else {
+
+			bool inRange = false;
+
+			for (int i = 0; i < COLUMNTOTAL; ++i) {
+
+				if (columnString == Letters[i])
+
+					inRange = true;
+			}
+			//Error Checking: Checks if Column Letter is in the range
+			if (inRange == false)
+				throw runtime_error("Invalid ColumnLetter");
+
+
+		}
+
+
 	}
 
 	//Outputs Error statements
 	catch (runtime_error& excpt) {
 		cout << excpt.what() << endl;
-		cout << "Cannot complete reservation" << endl;
-
+		cout << "Cannot complete cancellation" << endl;
+		error = true;
 	}
-
-
-	//Sets letters to the columns
-
-	for (int i = 0; i < COLUMNTOTAL; ++i) {
-
-		if (columnString == Letters[i])
-			column = i;
-
-	}
-
-
-	//Sets rows to proper number
-	row = stoi(rowString) - 1;
+	
+	
 
 
 
-	//Reserves the seats if availbe
-	if (seatChart[row][column].reserved == true)
-		cout << "This seat is not available";
-	else
-	{
-		seatChart[row][column].input = "X";
-		cout << "This seat is now reserved";
-		seatChart[row][column].reserved = true;
+	if (error == false) {
+		//Sets letters to the columns
 
+		for (int i = 0; i < COLUMNTOTAL; ++i) {
+
+			if (columnString == Letters[i])
+				column = i;
+
+		}
+
+
+		//Sets rows to proper number
+		row = stoi(rowString) - 1;
+
+
+
+		//Reserves the seats if availbe
+		if (seatChart[row][column].getReserved() == true)
+			cout << "This seat is not available";
+		else
+		{
+			seatChart[row][column].setInput("X");
+			cout << "This seat is now reserved";
+			seatChart[row][column].setReserved (true);
+
+		}
 	}
 }
 
 void Plane::cancelReservation() {
 
-	string rowString;
-	string columnString;
-
+	string rowString = "0";
+	string columnString = "A";
+	bool error = false;
 
 	string userSeat;
 	cout << "Enter desired seat" << endl;
@@ -212,7 +237,7 @@ void Plane::cancelReservation() {
 		cin >> userSeat;
 
 		//Error checking: checks if size if greater than what can be entered
-		if (userSeat.size() >= 6) {
+		if (userSeat.size() >= 6 || userSeat.size() < 2) {
 			throw runtime_error("Invalid Seat");
 		}
 
@@ -245,56 +270,77 @@ void Plane::cancelReservation() {
 
 		//Error Checking: Checsk if a valid Column letter in put in
 		char tempChar = columnString.at(0);
-		if (!isalpha(tempChar))
+		if (!isalpha(tempChar)) {
 			throw runtime_error("Invalid Column");
+		}
+		else {
+
+			bool inRange = false;
+
+			for (int i = 0; i < COLUMNTOTAL; ++i) {
+
+				if (columnString == Letters[i])
+
+					inRange = true;
+			}
+		//Error Checking: Checks if Column Letter is in the range
+			if (inRange == false)
+				throw runtime_error("Invalid ColumnLetter");
+
+
+		}
+		
+
 	}
 
 	//Outputs Error statements
 	catch (runtime_error& excpt) {
 		cout << excpt.what() << endl;
-		cout << "Cannot complete cancelation" << endl;
-
+		cout << "Cannot complete cancellation" << endl;
+		error = true;
 	}
 
 
+	if (error == false) {
 
+		//Sets letters to columns
 
-	//Sets letters to columns
-
-	for (int i = 0; i < COLUMNTOTAL; ++i) {
-
-		if (columnString == Letters[i])
-			column = i;
-
-	}
-
-	//Sets rows to proper number
-
-	row = stoi(rowString) - 1;
-
-
-
-
-	// Cancels reservations 
-	if (seatChart[row][column].reserved == true) {
 		for (int i = 0; i < COLUMNTOTAL; ++i) {
 
-			if (column == i)
-				seatChart[row][column].input = Letters[i];
+			if (columnString == Letters[i])
+				column = i;
 
 		}
 
-		seatChart[row][column].reserved = false;
 
-		cout << "This seat reservation has been cancelled";
 
+		//Sets rows to proper number
+
+		row = stoi(rowString) - 1;
+
+
+
+
+		// Cancels reservations 
+		if (seatChart[row][column].getReserved() == true) {
+			for (int i = 0; i < COLUMNTOTAL; ++i) {
+
+				if (column == i)
+					seatChart[row][column].setInput( Letters[i]);
+
+			}
+
+			seatChart[row][column].setReserved (false);
+
+			cout << "This seat reservation has been cancelled";
+
+		}
+		else
+
+		{
+			cout << "Error: This seat has not been reserved";
+		}
 	}
-	else
-
-	{
-		cout << "Error: This seat has not been reserved";
-	}
-
 }
 
 void Plane::statistics() {
@@ -306,7 +352,7 @@ void Plane::statistics() {
 	for (int i = 0; i < ROWTOTAL; ++i) {
 		for (int j = 0; j < COLUMNTOTAL; ++j) {
 
-			if (seatChart[i][j].reserved == true)
+			if (seatChart[i][j].getReserved() == true)
 
 				++reservedCount;
 		}
@@ -325,7 +371,7 @@ void Plane::statistics() {
 
 	for (int i = 0; i < ROWTOTAL; ++i) {
 
-		if (seatChart[i][0].reserved == false) {
+		if (seatChart[i][0].getReserved() == false) {
 
 			cout << i + 1 << "A" << endl;
 
@@ -334,7 +380,7 @@ void Plane::statistics() {
 
 	for (int i = 0; i < ROWTOTAL; ++i) {
 
-		if (seatChart[i][COLUMNTOTAL].reserved == false) {
+		if (seatChart[i][COLUMNTOTAL].getReserved() == false) {
 
 			cout << i + 1 << Letters[COLUMNTOTAL - 1] << endl;
 
@@ -350,7 +396,7 @@ void Plane::statistics() {
 
 		for (int j = 0; j < ROWTOTAL; ++j) {
 
-			if (seatChart[j][i].reserved == false) {
+			if (seatChart[j][i].getReserved() == false) {
 
 				cout << j + 1 << Letters[i] << endl;
 
@@ -391,7 +437,7 @@ void Plane::saveChart() {
 
 		for (int j = 0; j < COLUMNTOTAL; ++j) {
 
-			outFile << seatChart[i][j].input << " ";
+			outFile << seatChart[i][j].getInput() << " ";
 		}
 		outFile << endl;
 	}
